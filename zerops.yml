@@ -1,14 +1,38 @@
-api:
+# hostname of your service
+# (supports monorepositories! just add
+# one service section after the other)
+python0:
+  # ==== how to build your application ====
   build:
-    build:
-      - echo 'nothing to see here, move along..'
-    deploy: [ './app.py' ]
-  run:
+    # select what technology should the
+    # build container be based on, can
+    # be different from service technology
+    # see docs for full list
+    base: [ python@3.8 ]
+    # *optional* add additional dependencies
+    # on top of base technology (combination
+    # will be cached for next build)
     prepare:
-      - sudo apt update
-      - sudo apt -y install python3-pip
-      - sudo apt -y install python3-venv
-      - cd /var/www && python3 -m venv env
-      - cd /var/www && source env/bin/activate && pip3 install flask
-      - cd /var/www && source env/bin/activate && pip3 install waitress
-    start: source env/bin/activate && waitress-serve --call app:create_app
+    #   - apt install python3-pip
+    #   - curl otherthing
+    # build your application
+    build:
+    # select which files / folders to deploy
+    # after the build succesfully finished
+    deploy: [ app.py ]
+    # *optional*: which files / folders
+    # to cache for the next use
+    # cache: [ ]
+  # ==== how to run your application ====
+  run:
+    # *optional* install dependencies that your
+    # runtime service requires (will be cached)
+    # prepare:
+    #   - apt install python3-pip libjpeg-dev
+    #   - python3 -m pip install Pillow
+    # *optional*: triggered before each start/restart
+    # of your application, to eg. clean cache
+    # init:
+    #  - rm -rf ./cache
+    # how to start your application
+    start: python3 app.py
